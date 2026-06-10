@@ -1,6 +1,6 @@
 # 50 Days of Modern Angular: Day 2 - TypeScript Essentials
 
-1. Welcome Back: Your Angular Superpower
+## 1. Welcome Back: Your Angular Superpower
 
 Crushing Day 1 was no small feat, and it is a massive milestone on your journey toward mastering enterprise application design. Welcome back! Today, we are unlocking **TypeScript**, the definitive superpower that serves as the unyielding, type-safe, and functional foundation for all Modern Angular development.
 
