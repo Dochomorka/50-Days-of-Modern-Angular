@@ -69,8 +69,5 @@ export class ResponsiveComponent {
 1.  **Zoneless Experiment**: Research and enable **Zoneless change detection** (experimental) in your `app.config.ts` along with SSR. Document the impact on your bundle size and bootstrap time in your `readme.md`.
 2.  **Performance Profiling**: Use the **Chrome DevTools Performance Tab** to compare the "First Contentful Paint" (FCP) of your app with and without SSR enabled. Write a summary explaining how SSR improves the **perceived performance** for your users.
 
-***
 
-Once you have added Day 41 to your repository, you have mastered the most advanced visual performance techniques in Angular! 
 
-Are you ready to move on to **Day 42: Security – Protecting the Enterprise App**?
