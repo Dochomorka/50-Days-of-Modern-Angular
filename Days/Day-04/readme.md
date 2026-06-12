@@ -1,80 +1,92 @@
-Day 4: Modern Template Control Flow [326]
+# Day 4: Modern Template Control Flow
 
-1. Welcome Back and the Modern Vision [326]
+### **Welcome Back!**
+Congratulations on completing Day 3! You’ve mastered the transition to standalone components. Today, we revolutionize how you write templates. Angular's **Modern Control Flow** replaces legacy structural directives like `*ngIf` and `*ngFor` with a built-in, highly optimized block syntax. This new syntax is not only easier to read but also significantly faster for the framework to process.
 
-Welcome back to Day 4 of the Modern Angular challenge, where we transition from basic setup to mastering the architectural engine of your templates [326]. Congratulations on reaching this milestone, as today we explore Modern Control Flow, a transformative update that replaces legacy structural directives with native compiler instructions [326, 328]. As a curriculum architect, I want you to recognise that this shift is not merely aesthetic; it is a fundamental move towards a standalone-first experience that eliminates the runtime overhead traditionally associated with the CommonModule [2.0.0]. Mastering this syntax is your gateway to high-performance Angular development and cleaner, more maintainable codebases [326].
+---
 
-2. The Evolution: From Directives to Block Syntax [113, 326]
+### **Core Concepts**
 
-Angular has evolved past legacy structural directives like *ngIf and *ngFor to provide a more standardised and efficient developer experience [113, 326]. The new built-in block syntax integrates more natively with the Angular compiler, allowing logic to be handled at the core level rather than through external library code [326]. This transition to Modern Control Flow means that our standalone components can now execute logical branching without the need to import a single structural directive [2.0.0, 326]. By removing these legacy dependencies, we significantly reduce the complexity of our dependency graph and optimise the final bundle size of our applications [2.0.0, 326].
+#### **1. Built-in Block Syntax**
+Modern control flow uses a new syntax starting with the `@` symbol. These blocks are integrated directly into the Angular compiler, meaning they don't require manual imports of `CommonModule` or individual directives. This results in cleaner templates and smaller bundle sizes.
 
-3. Conditional Rendering with @if [113, 326]
+#### **2. Conditional Rendering with `@if`**
+The `@if` block provides a declarative way to show or hide content. Unlike the old `*ngIf`, you can now use `@else if` and `@else` directly without needing complex `<ng-template>` or `<ng-container>` wrappers.
 
-The @if block represents a native conditional rendering mechanism that requires zero imports in your standalone component metadata [113, 326]. This block syntax allows you to express conditional logic, such as switching between a "User Profile" view and a "Login" prompt, with a much clearer visual structure [326]. Unlike the legacy *ngIf, the @if and @else blocks are recognised directly by the compiler, which ensures that your template logic is as fast as a standard JavaScript if statement [113, 326]. You can visualise this logic in a simple toggle component that manages user authentication states [326].
+#### **3. Optimized Looping with `@for`**
+The `@for` block is the modern standard for iterating through collections. It includes two major improvements:
+*   **Mandatory `track` expression**: You must provide a unique identifier (like an ID) for each item. This allows Angular to precisely update only the changed elements in the DOM instead of re-rendering the whole list.
+*   **Built-in `@empty` block**: You can define exactly what to display if the list is empty, eliminating the need for a separate conditional check.
 
-@if (isLoggedIn) {
-  <p>Welcome back to your User Profile!</p>
-} @else {
-  <p>Please log in to continue.</p>
-}
+#### **4. Branching Logic with `@switch`**
+For templates with multiple conditions, `@switch` offers a readable alternative to nested if-statements. It works similarly to JavaScript switch statements, using `@case` and `@default` to manage complex UI states.
 
+---
 
-4. Advanced Iteration with @for and @empty [326, 351]
+### **Hands-on Implementation**
 
-The @for block provides a powerful iteration engine where the track expression has become a mandatory compile-time requirement [326, 351]. By enforcing identity tracking at the compiler level, Angular prevents common re-rendering bugs and performance regressions that often plague large-scale enterprise applications [351]. The track expression is a significant upgrade over the legacy trackBy function, as it is easier to implement and allows the rendering engine to optimise DOM updates with surgical precision [326, 351]. Furthermore, the @empty block allows you to initialise fallback content for empty collections without needing additional conditional wrappers [326]. This native integration ensures that your list-rendering logic remains robust even as your data sets scale [326, 351].
+Let's build a component that displays a list of "Tasks" using these modern blocks.
 
-@for (item of items; track item.id) {
-  <div class="list-item">{{ item.name }}</div>
-} @empty {
-  <p>The collection is currently empty.</p>
-}
-
-
-5. Complex Branching with @switch [326]
-
-For handling multiple mutually exclusive states, the @switch block provides a clean and declarative alternative to nested conditions [326]. By utilising @case and @default blocks, you can handle complex branching logic that would otherwise become unwieldy with multiple @if statements [326]. This structure is particularly effective for managing UI states like "Loading", "Error", or "Success" within a single view [326]. Using @switch ensures your templates remain expressive and easy to follow as your application logic grows [326].
-
-6. Hands-on Implementation: The Category Component [171, 326]
-
-Now, let us implement a standalone component that showcases these architectural wins by managing a dynamic list of 'Categories' [171, 351]. Notice that this component does not require CommonModule or any individual structural directives in its imports array, which is a major win for our standalone-first architecture [113, 326]. Follow the example below to see how the TypeScript metadata and the HTML template work together to create a reactive, high-performance interface [171, 326].
-
-import { Component } from '@angular/core';
+```typescript
+import { Component, signal } from '@angular/core';
 
 @Component({
-  selector: 'app-category-list',
+  selector: 'app-task-manager',
   standalone: true,
-  imports: [], // Zero imports required for control flow!
   template: `
-    <button (click)="toggleVisibility()">Toggle Categories</button>
+    <div class="container">
+      <h2>Task Manager</h2>
 
-    @if (isVisible) {
-      <h2>Product Categories</h2>
-      @for (category of categories; track category.id) {
-        <ul>
-          <li>{{ category.name }}</li>
-        </ul>
-      } @empty {
-        <p>The category list is currently empty.</p>
+      <!-- Conditional Logic -->
+      @if (isAdmin()) {
+        <p class="badge">Admin Mode Active</p>
+      } @else {
+        <p class="badge">Viewer Mode</p>
       }
-    }
+
+      <!-- Optimized Loop -->
+      <ul class="task-list">
+        @for (task of tasks(); track task.id) {
+          <li>{{ task.name }}</li>
+        } @empty {
+          <li>No tasks available. Take a break!</li>
+        }
+      </ul>
+
+      <!-- Switch Logic -->
+      @switch (currentStatus()) {
+        @case ('loading') { <p>Loading data...</p> }
+        @case ('error') { <p class="error">Something went wrong.</p> }
+        @default { <p>System ready.</p> }
+      }
+    </div>
   `
 })
-export class CategoryComponent {
-  isVisible = true;
-  categories = [
-    { id: 1, name: 'Electronics' },
-    { id: 2, name: 'Home & Garden' },
-    { id: 3, name: 'Books' }
-  ];
-
-  toggleVisibility() {
-    this.isVisible = !this.isVisible;
-  }
+export class TaskManagerComponent {
+  isAdmin = signal(true);
+  currentStatus = signal('idle');
+  
+  tasks = signal([
+    { id: 1, name: 'Master Standalone Components' },
+    { id: 2, name: 'Learn Modern Control Flow' },
+    { id: 3, name: 'Build Fine-Grained Reactivity' }
+  ]);
 }
+```
 
+---
 
-7. Tiered Challenges: Level Up Your Skills [113, 326, 351]
+### **Tiered Challenges**
 
-* Easy: Create a new standalone component that uses an @if block to toggle a "Welcome" message based on a boolean property, ensuring no legacy directives are imported [113, 326].
-* Medium: Build a component to display a list of "Categories" using a @for loop with a mandatory track expression and provide an @empty state placeholder for when the array is cleared [326, 351].
-* Hard: Compare the bundle size and compiler output of a legacy *ngIf component versus a modern @if component, explaining how the removal of CommonModule dependencies improves the standalone-first experience [113, 326].
+#### **Easy Challenges**
+1. **The Toggle**: Create a component with a boolean signal. Use an `@if` block to show a "Welcome" message when true and a "Goodbye" message when false.
+2. **Simple List**: Use `@for` to display an array of strings representing your favorite programming languages. Ensure you provide a `track` expression.
+
+#### **Medium Challenges**
+1. **Empty States**: Create a "Categories" component. Use a signal that starts as an empty array. Use `@for` and the `@empty` block to display a "No categories found" placeholder. Add a button that populates the array to see the list transition.
+2. **Context Variables**: Inside an `@for` loop, use the built-in context variables like `$index`, `$first`, or `$last` to style the first item of your list differently.
+
+#### **Hard Challenges**
+1. **The Performance Proof**: Research the mandatory `track` expression. In your `readme.md`, write a summary of how `track` allows Angular's rendering engine to optimize DOM updates compared to the legacy `trackBy` function in `*ngFor`.
+2. **Complex Branching**: Build a "Status Dashboard" using `@switch`. Use a signal to toggle between 'online', 'offline', 'away', and 'busy' states, displaying a unique icon and color for each case.
+
