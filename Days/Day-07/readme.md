@@ -80,8 +80,4 @@ export class UserCardComponent {
 2. **Derived Input Logic**: Create a component that receives a `price` and `taxRate` as signal inputs. Use a **`computed()`** signal inside the component to calculate the `totalPrice` automatically whenever either input changes.
 3. **Refactor Exercise**: Take a component from a previous day that used a standard variable and a function to update it. Refactor it to use a `model()` signal and explain how it reduced the amount of "boilerplate" code needed for two-way synchronization.
 
-***
 
-Once you have added these Signal input patterns to your repository, you’ve mastered modern component communication!
-
-Are you ready to move on to **Day 8: Signal-based Queries (`viewChild`, `contentChild`)**?
